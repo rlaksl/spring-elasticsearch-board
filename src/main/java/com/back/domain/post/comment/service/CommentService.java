@@ -5,6 +5,8 @@ import com.back.domain.post.comment.repository.CommentRepository;
 import com.back.domain.post.post.document.Post;
 import com.back.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +38,10 @@ public class CommentService {
 
   public List<Comment> findByPostId(String postId) {
     return commentRepository.findByPostId(postId);
+  }
+
+  public Page<Comment> findByPostId(String postId, Pageable pageable) {
+    return commentRepository.findByPostId(postId, pageable);
   }
 
   // 수정
