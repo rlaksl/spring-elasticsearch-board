@@ -55,5 +55,4 @@ public class Post {
             ", lastModifiedAt=" + lastModifiedAt +
             '}';
   }
-
 }
