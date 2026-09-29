@@ -39,6 +39,21 @@ public class PostService {
     return postRepository.findAll(pageable);
   }
 
+  // 검색
+  public enum SearchType {
+    TITLE,
+    CONTENT,
+    TITLE_CONTENT
+  }
+
+  public Page<Post> search(String keyword, SearchType searchType, Pageable pageable) {
+    return switch (searchType) {
+      case TITLE -> postRepository.findByTitleContaining(keyword, pageable);
+      case CONTENT -> postRepository.findByContentContaining(keyword, pageable);
+      case TITLE_CONTENT -> postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+    };
+  }
+
   // 수정
   public Post update(String id, String title, String content) {
     Post post = findById(id);

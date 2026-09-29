@@ -52,6 +52,23 @@ public class ApiV1PostController {
     return postService.findAll(pageable);
   }
 
+  // 검색
+  @GetMapping("/search")
+  public Page<Post> findAll(
+          @RequestParam(defaultValue = "0") int page,
+          @RequestParam(defaultValue = "10") int size,
+          @RequestParam(required = false) String keyword,
+          @RequestParam(required = false) PostService.SearchType searchType
+  ) {
+    Pageable pageable = PageRequest.of(page, size);
+
+    if (keyword != null && !keyword.isBlank() && searchType != null) {
+      return postService.search(keyword, searchType, pageable);
+    }
+
+    return postService.findAll(pageable);
+  }
+
   @RequestMapping("/{id}")
   public Post findById(@PathVariable String id) {
     return postService.findById(id);

@@ -296,4 +296,91 @@ public class PostControllerTests extends BaseTest {
             .andExpect(jsonPath("$.pageable.pageNumber").value(0))
             .andExpect(jsonPath("$.pageable.pageSize").value(10));
   }
+
+  @Test
+  @DisplayName("GET /api/v1/posts/search - 제목 검색")
+  void t13() throws Exception {
+    // 검색용 포스트 생성
+    mockMvc.perform(
+            post("/api/v1/posts")
+                    .contentType("application/json")
+                    .content(
+                            objectMapper.writeValueAsBytes(
+                                    new ApiV1PostController.CreatePostRequest(
+                                            "UniqueSearchTitle",
+                                            "Some Content",
+                                            "Author"
+                                    )
+                            )
+                    )
+    ).andExpect(status().isCreated());
+
+    // 제목으로 검색
+    mockMvc.perform(
+                    get("/api/v1/posts/search")
+                            .param("keyword", "UniqueSearchTitle")
+                            .param("searchType", "TITLE")
+                            .contentType("application/json")
+            ).andExpect(status().isOk())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content[0].title").value("UniqueSearchTitle"));
+  }
+
+  @Test
+  @DisplayName("GET /api/v1/posts/search - 내용 검색")
+  void t14() throws Exception {
+    // 검색용 포스트 생성
+    mockMvc.perform(
+            post("/api/v1/posts")
+                    .contentType("application/json")
+                    .content(
+                            objectMapper.writeValueAsBytes(
+                                    new ApiV1PostController.CreatePostRequest(
+                                            "Title",
+                                            "UniqueSearchContent",
+                                            "Author"
+                                    )
+                            )
+                    )
+    ).andExpect(status().isCreated());
+
+    // 내용으로 검색
+    mockMvc.perform(
+                    get("/api/v1/posts/search")
+                            .param("keyword", "UniqueSearchContent")
+                            .param("searchType", "CONTENT")
+                            .contentType("application/json")
+            ).andExpect(status().isOk())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content[0].content").value("UniqueSearchContent"));
+  }
+
+  @Test
+  @DisplayName("GET /api/v1/posts/search - 제목+내용 검색 (기본값)")
+  void t15() throws Exception {
+    // 검색용 포스트 생성
+    mockMvc.perform(
+            post("/api/v1/posts")
+                    .contentType("application/json")
+                    .content(
+                            objectMapper.writeValueAsBytes(
+                                    new ApiV1PostController.CreatePostRequest(
+                                            "TitleAndContentSearchTest",
+                                            "Content for search",
+                                            "Author"
+                                    )
+                            )
+                    )
+    ).andExpect(status().isCreated());
+
+    // 제목+내용으로 검색 (기본값)
+    mockMvc.perform(
+                    get("/api/v1/posts/search")
+                            .param("keyword", "TitleAndContentSearchTest")
+                            .param("searchType", "TITLE_CONTENT")
+                            .contentType("application/json")
+            ).andExpect(status().isOk())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content[0].title").value("TitleAndContentSearchTest"));
+  }
 }
