@@ -24,12 +24,31 @@ public class PostService {
     return postRepository.save(post);
   }
 
-  // 전체 조회
+  // 조회
   public List<Post> findAll() {
     return postRepository.findAll();
   }
 
   public Post findById(String id) {
     return postRepository.findById(id).orElseThrow(()->new NotFoundException("Post not found with id: " + id));
+  }
+
+  // 수정
+  public Post update(String id, String title, String content) {
+    Post post = findById(id);
+    if (title != null){
+      post.setTitle(title);
+    }
+    if (content != null){
+      post.setContent(content);
+    }
+    post.setLastModifiedAt(java.time.OffsetDateTime.now());
+    return postRepository.save(post);
+  }
+
+  // 삭제
+  public void delete(String id) {
+    Post post = findById(id);
+    postRepository.delete(post);
   }
 }
