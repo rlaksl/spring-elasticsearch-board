@@ -4,10 +4,11 @@ import com.back.domain.post.post.document.Post;
 import com.back.domain.post.post.repository.PostRepository;
 import com.back.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,11 @@ public class PostService {
 
   public Post findById(String id) {
     return postRepository.findById(id).orElseThrow(()->new NotFoundException("Post not found with id: " + id));
+  }
+
+  // 페이지네이션
+  public Page<Post> findAll(Pageable pageable) {
+    return postRepository.findAll(pageable);
   }
 
   // 수정
